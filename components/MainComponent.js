@@ -228,6 +228,12 @@ const MainNavigator = createDrawerNavigator(
   }
 );
 class Main extends Component {
+  componentDidMount() {
+    this.props.fetchDishes();
+    this.props.fetchComments();
+    this.props.fetchPromos();
+    this.props.fetchLeaders();
+  }
   render() {
     return (
       <View
