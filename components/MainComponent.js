@@ -273,6 +273,7 @@ class Main extends Component {
     this.props.fetchPromos();
     this.props.fetchLeaders();
   }
+
   render() {
     return (
       <View
