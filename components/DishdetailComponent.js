@@ -100,6 +100,8 @@ class Dishdetail extends Component {
 
   toggleModal() {
     this.setState({ showModal: !this.state.showModal });
+  }
+  readComment() {
     this.props.postComment(
       this.props.dishId,
       this.state.rating,
@@ -107,7 +109,6 @@ class Dishdetail extends Component {
       this.state.comment
     );
   }
-
   resetForm() {
     this.setState({
       rating: 1,
@@ -179,6 +180,7 @@ class Dishdetail extends Component {
             <Button
               style={{ color: "red" }}
               onPress={() => {
+                this.readComment();
                 this.toggleModal();
                 this.resetForm();
               }}
