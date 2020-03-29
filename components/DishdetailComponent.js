@@ -35,9 +35,13 @@ const mapDispatchToProps = dispatch => ({
 
 function RenderDish(props) {
   const dish = props.dish;
-
+  handleViewRef = ref => (this.view = ref);
   const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
     if (dx < -200) return true;
+    else return false;
+  };
+  const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+    if (dx > 200) return true;
     else return false;
   };
 
@@ -47,6 +51,9 @@ function RenderDish(props) {
     },
     onPanResponderEnd: (e, gestureState) => {
       console.log("pan responder end", gestureState);
+      if (recognizeComment(gestureState)) {
+        props.toggleModal();
+      }
       if (recognizeDrag(gestureState))
         Alert.alert(
           "Add Favorite",
@@ -79,6 +86,7 @@ function RenderDish(props) {
         animation="fadeInDown"
         duration={2000}
         delay={1000}
+        ref={this.handleViewRef}
         {...panResponder.panHandlers}
       >
         <Card featuredTitle={dish.name} image={{ uri: baseUrl + dish.image }}>
@@ -147,8 +155,8 @@ class Dishdetail extends Component {
     this.state = {
       showModal: false
     };
+    this.toggleModal = this.toggleModal.bind(this);
   }
-
   toggleModal() {
     this.setState({ showModal: !this.state.showModal });
   }
@@ -187,6 +195,7 @@ class Dishdetail extends Component {
           dish={this.props.dishes.dishes[+dishId]}
           favorite={this.props.favorites.some(el => el === dishId)}
           onPress={() => this.markFavorite(dishId)}
+          toggleModal={() => this.toggleModal()}
         />
         <Icon
           raised
