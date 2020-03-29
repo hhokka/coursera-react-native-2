@@ -13,6 +13,8 @@ import {
 import { Card } from "react-native-elements";
 import DatePicker from "react-native-datepicker";
 import * as Animatable from "react-native-animatable";
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
 
 class Reservation extends Component {
   constructor(props) {
@@ -52,7 +54,13 @@ class Reservation extends Component {
           onPress: () => this.resetForm(),
           style: "cancel"
         },
-        { text: "OK", onPress: () => this.resetForm() }
+        {
+          text: "OK",
+          onPress: () => {
+            this.presentLocalNotification(this.state.date);
+            this.resetForm();
+          }
+        }
       ],
       { cancelable: false }
     );
@@ -67,6 +75,38 @@ class Reservation extends Component {
     });
     alert("Form Reseted");
   }
+
+  async obtainNotificationPermission() {
+    let permission = await Permissions.getAsync(
+      Permissions.USER_FACING_NOTIFICATIONS
+    );
+    if (permission.status !== "granted") {
+      permission = await Permissions.askAsync(
+        Permissions.USER_FACING_NOTIFICATIONS
+      );
+      if (permission.status !== "granted") {
+        Alert.alert("Permission not granted to show notifications");
+      }
+    }
+    return permission;
+  }
+
+  async presentLocalNotification(date) {
+    await this.obtainNotificationPermission();
+    Notifications.presentLocalNotificationAsync({
+      title: "Your Reservation",
+      body: "Reservation for " + date + " requested",
+      ios: {
+        sound: true
+      },
+      android: {
+        sound: true,
+        vibrate: true,
+        color: "#512DA8"
+      }
+    });
+  }
+
   render() {
     return (
       <Animatable.View animation="zoomInUp">
