@@ -9,10 +9,12 @@ import Favorites from "./FavoriteComponent";
 import {
   View,
   Platform,
+  Text,
+  ScrollView,
   Image,
   StyleSheet,
-  ScrollView,
-  Text
+  NetInfo,
+  ToastAndroid
 } from "react-native";
 import {
   createStackNavigator,
