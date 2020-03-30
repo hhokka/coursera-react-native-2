@@ -8,7 +8,8 @@ import {
   StyleSheet,
   Button,
   Alert,
-  PanResponder
+  PanResponder,
+  Share
 } from "react-native";
 import { Card, Icon, Input, Rating } from "react-native-elements";
 import { DISHES } from "../shared/dishes";
@@ -82,13 +83,7 @@ function RenderDish(props) {
 
   if (dish != null) {
     return (
-      <Animatable.View
-        animation="fadeInDown"
-        duration={2000}
-        delay={1000}
-        ref={this.handleViewRef}
-        {...panResponder.panHandlers}
-      >
+      <View>
         <Card featuredTitle={dish.name} image={{ uri: baseUrl + dish.image }}>
           <Text style={{ margin: 10 }}>{dish.description}</Text>
           <View
@@ -114,7 +109,7 @@ function RenderDish(props) {
             />
           </View>
         </Card>
-      </Animatable.View>
+      </View>
     );
   } else {
     return <View></View>;
@@ -186,7 +181,19 @@ class Dishdetail extends Component {
   static navigationOptions = {
     title: "Dish Details"
   };
-
+  shareDish = (title, message, url) => {
+    //alert("title: " + title + "message: " + message + "url: " + url);
+    Share.share(
+      {
+        title: title,
+        message: title + ": " + message + " " + url,
+        url: url
+      },
+      {
+        dialogTitle: "Share " + title
+      }
+    );
+  };
   render() {
     const dishId = this.props.navigation.getParam("dishId", "");
     return (
@@ -204,6 +211,21 @@ class Dishdetail extends Component {
           type="font-awesome"
           color="purple"
           onPress={() => this.toggleModal()}
+        />
+        <Icon
+          raised
+          reverse
+          name="share"
+          type="font-awesome"
+          color="#51D2A8"
+          style={styles.cardItem}
+          onPress={() =>
+            this.shareDish(
+              this.props.dishes.dishes[+dishId].name,
+              this.props.dishes.dishes[+dishId].description,
+              baseUrl + this.props.dishes.dishes[+dishId].image
+            )
+          }
         />
         <RenderComments
           comments={this.props.comments.comments.filter(
