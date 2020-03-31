@@ -15,6 +15,7 @@ import DatePicker from "react-native-datepicker";
 import * as Animatable from "react-native-animatable";
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
+import * as Calendar from "expo-calendar";
 
 class Reservation extends Component {
   constructor(props) {
@@ -38,6 +39,7 @@ class Reservation extends Component {
 
   handleReservation() {
     console.log(JSON.stringify(this.state));
+
     Alert.alert(
       "Your Reservation OK?",
       "Number of Guests: " +
@@ -57,6 +59,7 @@ class Reservation extends Component {
         {
           text: "OK",
           onPress: () => {
+            this.addReservationToCalendar(this.state.date);
             this.presentLocalNotification(this.state.date);
             this.resetForm();
           }
@@ -73,7 +76,6 @@ class Reservation extends Component {
       date: "",
       showModal: false
     });
-    alert("Form Reseted");
   }
 
   async obtainNotificationPermission() {
@@ -86,6 +88,17 @@ class Reservation extends Component {
       );
       if (permission.status !== "granted") {
         Alert.alert("Permission not granted to show notifications");
+      }
+    }
+    return permission;
+  }
+
+  async obtainCalendarPermission() {
+    let permission = await Permissions.getAsync(Permissions.CALENDAR);
+    if (permission.status !== "granted") {
+      permission = await Permissions.askAsync(Permissions.CALENDAR);
+      if (permission.status !== "granted") {
+        Alert.alert("Permission not granted to show calendar");
       }
     }
     return permission;
@@ -106,7 +119,17 @@ class Reservation extends Component {
       }
     });
   }
-
+  addReservationToCalendar(date) {
+    const details = {
+      title: "Con Fusion Table Reservation",
+      startDate: Date.parse(date),
+      endDate: Date.parse(date) * 2 * 60 * 60 * 1000,
+      timezone: "Asia/Hong_Kong",
+      location: "121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong"
+    };
+    alert(JSON.stringify(details));
+    Calendar.createEventAsync(Calendar.DEFAULT, details);
+  }
   render() {
     return (
       <Animatable.View animation="zoomInUp">
